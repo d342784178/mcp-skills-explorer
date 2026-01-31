@@ -28,12 +28,23 @@ export class SkillScanner {
         if (entry.isDirectory()) {
           const skillPath = path.join(rootPath, entry.name);
           
-          // 检查是否包含 skill.md
-          const skillFilePath = path.join(skillPath, SkillScanner.SKILL_FILE_NAME);
+          // 检查是否包含 skill.md (不区分大小写)
+          let skillFilePath = path.join(skillPath, SkillScanner.SKILL_FILE_NAME);
           
           try {
             await fs.access(skillFilePath);
-            
+          } catch (error) {
+            // 尝试大写版本 SKILL.md
+            skillFilePath = path.join(skillPath, 'SKILL.md');
+            try {
+              await fs.access(skillFilePath);
+            } catch (error2) {
+              // 文件不存在，跳过
+              continue;
+            }
+          }
+          
+          try {
             // 解析元数据
             const parser = new MetadataParser();
             const { metadata, rawMetadata } = await parser.parseMetadata(skillFilePath);
@@ -44,7 +55,7 @@ export class SkillScanner {
               rawMetadata
             });
           } catch (error) {
-            // 文件不存在，跳过
+            console.error(`解析 skill 文件失败 (${skillFilePath}):`, error);
             continue;
           }
         }

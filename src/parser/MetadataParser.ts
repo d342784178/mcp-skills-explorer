@@ -73,18 +73,56 @@ export class MetadataParser {
   private extractMetadata(content: string): any {
     const metadata: any = {};
     
+    // 检查是否有 YAML front matter (--- 包围的部分)
+    const yamlMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+    
+    let linesToParse: string[];
+    if (yamlMatch) {
+      // 解析 YAML front matter
+      linesToParse = yamlMatch[1].split('\n');
+    } else {
+      // 解析普通格式
+      linesToParse = content.split('\n');
+    }
+    
     // 提取元数据字段
-    const lines = content.split('\n');
-    for (const line of lines) {
-      if (line.startsWith('name:')) metadata.name = line.substring(5).trim();
-      if (line.startsWith('description:')) metadata.description = line.substring(12).trim();
-      if (line.startsWith('author:')) metadata.author = line.substring(7).trim();
-      if (line.startsWith('version:')) metadata.version = line.substring(8).trim();
-      if (line.startsWith('category:')) metadata.category = line.substring(9).trim();
-      if (line.startsWith('tags:')) metadata.tags = line.substring(5).trim();
-      if (line.startsWith('language:')) metadata.language = line.substring(9).trim();
+    for (const line of linesToParse) {
+      const trimmedLine = line.trim();
+      
+      if (trimmedLine.startsWith('name:')) {
+        metadata.name = this.extractValue(trimmedLine, 'name:');
+      } else if (trimmedLine.startsWith('description:')) {
+        metadata.description = this.extractValue(trimmedLine, 'description:');
+      } else if (trimmedLine.startsWith('author:')) {
+        metadata.author = this.extractValue(trimmedLine, 'author:');
+      } else if (trimmedLine.startsWith('version:')) {
+        metadata.version = this.extractValue(trimmedLine, 'version:');
+      } else if (trimmedLine.startsWith('category:')) {
+        metadata.category = this.extractValue(trimmedLine, 'category:');
+      } else if (trimmedLine.startsWith('tags:')) {
+        metadata.tags = this.extractValue(trimmedLine, 'tags:');
+      } else if (trimmedLine.startsWith('language:')) {
+        metadata.language = this.extractValue(trimmedLine, 'language:');
+      } else if (trimmedLine.startsWith('license:')) {
+        metadata.license = this.extractValue(trimmedLine, 'license:');
+      }
     }
     
     return metadata;
+  }
+
+  /**
+   * 提取字段值，处理引号
+   */
+  private extractValue(line: string, prefix: string): string {
+    let value = line.substring(prefix.length).trim();
+    
+    // 移除引号（单引号或双引号）
+    if ((value.startsWith('"') && value.endsWith('"')) || 
+        (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.substring(1, value.length - 1);
+    }
+    
+    return value;
   }
 }

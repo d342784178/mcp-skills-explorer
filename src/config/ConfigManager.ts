@@ -11,7 +11,7 @@ export class ConfigManager {
   public async loadConfig(): Promise<void> {
     // 可以从配置文件或环境变量加载配置
     this.config = {
-      skillsDirectory: process.env.SKILLS_DIR || './claude-skills',
+      skillsDirectory: process.env.SKILLS_DIR || './test/claude-skills',
       serverName: 'claude-skill-mcp-server',
       serverVersion: '1.0.0'
     };
