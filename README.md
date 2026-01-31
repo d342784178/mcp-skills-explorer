@@ -213,14 +213,6 @@ npm run dev
 ```bash
 npm run build
 ```
-
-## 🚀 性能
-
-- 启动时间: < 1 秒
-- Skills 扫描: < 100ms
-- 工具列表响应: < 50ms
-- 工具调用响应: < 100ms
-
 ## 🔗 相关链接
 
 - **npm 包**: https://www.npmjs.com/package/mcp-skills-explorer
