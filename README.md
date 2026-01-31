@@ -7,7 +7,45 @@
 [![MCP](https://img.shields.io/badge/MCP-1.0-orange.svg)](https://modelcontextprotocol.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-一个强大的 MCP 服务器，能够自动读取 `claude-skills` 文件夹中的 `skill.md` 文件并生成 MCP 工具，让你轻松扩展 Claude 的能力。
+一个MCP服务器，能够自动读取 `claude-skills`标准文件夹中的 `skill.md` 文件生成mcp工具，让不支持claude-skills的agent通过mcp的方式使用上skill.
+
+## 📖 快速示例
+
+本项目在 `./test/claude-skills/` 目录下提供了一个完整的 docx skill 示例，演示如何将 Claude Skills 转换为 MCP 工具。
+
+### 配置示例
+
+在 MCP 配置文件中添加以下配置：
+
+```json
+{
+  "mcpServers": {
+    "mcp-skills-explorer": {
+      "command": "npx",
+      "args": ["-y", "mcp-skills-explorer"],
+      "env": {
+        "SKILLS_DIR": "test/claude-skills"
+      },
+      "disabled": false,
+      "autoApprove": ["docx"]
+    }
+  }
+}
+```
+
+### 工作原理
+
+1. **扫描**: 服务器自动扫描 `SKILLS_DIR` 指定的目录
+2. **解析**: 读取每个 skill 文件夹中的 `SKILL.md` 文件
+3. **注册**: 将 skill 转换为 MCP 工具并注册到服务器
+4. **使用**: Agent 可以通过 MCP 协议调用这些工具
+
+### 效果展示
+
+配置完成后，docx skill 会被自动注册为 MCP 工具，Agent 可以直接使用：
+
+![效果图](./doc/image.png)
+
 
 **📦 npm 包**: https://www.npmjs.com/package/mcp-skills-explorer
 
@@ -55,49 +93,6 @@ npm start
 ```
 
 ## 🎯 使用方法
-
-### 1. 创建你的第一个 Skill
-
-在 `claude-skills` 目录下创建新文件夹：
-
-```bash
-mkdir claude-skills/my-first-skill
-```
-
-创建 `skill.md` 文件：
-
-```markdown
-name: My First Skill
-description: 这是我的第一个技能
-author: Your Name
-version: 1.0.0
-category: example
-tags: demo, tutorial
-language: zh-CN
-
-# 我的第一个技能
-
-这里是技能的详细说明...
-
-## 功能
-
-- 功能 1
-- 功能 2
-
-## 使用示例
-
-提供使用示例...
-```
-
-### 2. 启动服务器
-
-```bash
-npm start
-```
-
-服务器会自动识别新的 skill 并注册为 MCP 工具。
-
-### 3. 在 MCP 客户端中配置
 
 编辑 MCP 配置文件：
 - **Claude Desktop (Windows)**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -208,18 +203,6 @@ mcp-skills-explorer/
 └── README.md                     # 项目说明
 ```
 
-## 🎨 示例 Skills
-
-项目包含 3 个示例 skills：
-
-### 1. Example Skill
-基础示例，展示 skill 的基本结构。
-
-### 2. Code Review Assistant
-帮助进行代码审查，提供代码质量建议和最佳实践。
-
-### 3. API Design Expert
-提供 RESTful API 设计建议和最佳实践指导。
 
 ## 🔧 开发
 
@@ -234,96 +217,6 @@ npm run dev
 ```bash
 npm run build
 ```
-
-### 打包发布
-
-查看 [package/](./package/) 文件夹获取完整的打包发布指南：
-
-- **发布指南**: [package/GUIDE.md](./package/GUIDE.md) - 完整的发布流程和常见问题
-- **发布脚本**: [package/publish.sh](./package/publish.sh) - 一键发布脚本
-
-#### 快速发布
-
-```bash
-# Windows Git Bash / Linux / Mac
-bash package/publish.sh
-```
-
-#### 更新版本
-
-```bash
-# 补丁版本 (1.0.0 -> 1.0.1)
-npm version patch
-npm publish
-
-# 次要版本 (1.0.0 -> 1.1.0)
-npm version minor
-npm publish
-
-# 主要版本 (1.0.0 -> 2.0.0)
-npm version major
-npm publish
-```
-
-## 📋 Skill 文件格式
-
-### 元数据字段
-
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| name | ✅ | 技能名称 |
-| description | ✅ | 技能描述 |
-| author | ❌ | 作者信息 |
-| version | ❌ | 版本号 |
-| category | ❌ | 分类 |
-| tags | ❌ | 标签（逗号分隔） |
-| language | ❌ | 语言代码 |
-
-### 完整示例
-
-```markdown
-name: Code Generator
-description: 自动生成代码模板
-author: Dev Team
-version: 1.0.0
-category: development
-tags: code, generator, template
-language: zh-CN
-
-# 代码生成器
-
-自动生成常用的代码模板和样板代码。
-
-## 支持的模板
-
-### React 组件
-\```jsx
-import React from 'react';
-
-export const MyComponent = () => {
-  return <div>Hello World</div>;
-};
-\```
-
-## 使用方法
-
-1. 选择模板类型
-2. 提供参数
-3. 获取生成的代码
-```
-
-## 🧪 测试结果
-
-✅ **所有测试通过**
-
-- 依赖安装: ✅
-- TypeScript 编译: ✅
-- 服务器启动: ✅
-- Skills 识别: ✅ (3/3)
-- MCP 协议: ✅
-- 工具列表: ✅
-- 工具调用: ✅
-- npm 发布: ✅
 
 ## 🚀 性能
 
