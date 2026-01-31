@@ -1,0 +1,27 @@
+# 源代码（只发布编译后的代码）
+src/
+test/
+*.ts
+!*.d.ts
+
+# 配置文件
+tsconfig.json
+.env
+.env.example
+
+# 开发文件
+.git/
+.gitignore
+.kiro/
+*.log
+
+# 测试文件
+*.test.js
+*.spec.js
+
+# 打包发布相关文件
+package/
+
+# 其他
+.DS_Store
+node_modules/
