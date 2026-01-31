@@ -36,11 +36,12 @@ export class SkillScanner {
             
             // 解析元数据
             const parser = new MetadataParser();
-            const metadata = await parser.parseMetadata(skillFilePath);
+            const { metadata, rawMetadata } = await parser.parseMetadata(skillFilePath);
             
             skillInfos.push({
               path: skillFilePath,
-              metadata
+              metadata,
+              rawMetadata
             });
           } catch (error) {
             // 文件不存在，跳过

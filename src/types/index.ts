@@ -19,4 +19,6 @@ export interface SkillInfo {
   path: string;
   /** Skill 元数据 */
   metadata: SkillMetadata;
+  /** 原始元数据文本 */
+  rawMetadata: string;
 }

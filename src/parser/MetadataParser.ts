@@ -10,12 +10,15 @@ export class MetadataParser {
   /**
    * 从文件路径解析元数据
    * @param skillFilePath skill.md 文件路径
-   * @returns 解析后的元数据
+   * @returns 解析后的元数据和原始元数据文本
    */
-  public async parseMetadata(skillFilePath: string): Promise<SkillMetadata> {
+  public async parseMetadata(skillFilePath: string): Promise<{ metadata: SkillMetadata; rawMetadata: string }> {
     try {
       const fs = await import('fs/promises');
       const content = await fs.readFile(skillFilePath, 'utf-8');
+      
+      // 提取原始元数据文本（从文件开头到第一个 # 标题之前）
+      const rawMetadata = this.extractRawMetadata(content);
       
       // 解析 front matter 或从内容中提取元数据
       const parsed = this.extractMetadata(content);
@@ -29,10 +32,39 @@ export class MetadataParser {
         language: parsed.language || 'undefined'
       };
 
-      return metadata;
+      return { metadata, rawMetadata };
     } catch (error) {
       throw new Error(`解析元数据失败: ${error}`);
     }
+  }
+
+  /**
+   * 提取原始元数据文本
+   */
+  private extractRawMetadata(content: string): string {
+    const lines = content.split('\n');
+    const metadataLines: string[] = [];
+    
+    for (const line of lines) {
+      // 遇到第一个 # 标题就停止
+      if (line.trim().startsWith('#')) {
+        break;
+      }
+      // 收集元数据行
+      if (line.trim() && (
+        line.startsWith('name:') ||
+        line.startsWith('description:') ||
+        line.startsWith('author:') ||
+        line.startsWith('version:') ||
+        line.startsWith('category:') ||
+        line.startsWith('tags:') ||
+        line.startsWith('language:')
+      )) {
+        metadataLines.push(line);
+      }
+    }
+    
+    return metadataLines.join('\n');
   }
 
   /**
