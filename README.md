@@ -25,9 +25,7 @@
       "args": ["-y", "mcp-skills-explorer"],
       "env": {
         "SKILLS_DIR": "test/claude-skills"
-      },
-      "disabled": false,
-      "autoApprove": ["docx"]
+      }
     }
   }
 }
